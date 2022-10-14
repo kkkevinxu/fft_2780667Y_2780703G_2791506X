@@ -24,7 +24,7 @@ def normalize(origin):
     return new
 
 def main():
-    Fs, samples = wavfile.read('/Users/DELL/Desktop/DSP/original.wav')
+    Fs, samples = wavfile.read('../ENG5027/original.wav')
     #Fs, samples = wavfile.read('/Users/96335/Desktop/original.wav')
     for i in range(0,sample_point):
         combined[i] = (samples[i, 0] + samples[i, 1])/2

@@ -11,10 +11,10 @@ from scipy.io import wavfile
 import scipy.signal
 
 # used the wave file as string
-file_a = 'C:/Users/DELL/Desktop/DSP/a.wav'
-file_e = 'C:/Users/DELL/Desktop/DSP/e.wav'
-file_i = 'C:/Users/DELL/Desktop/DSP/i.wav'
-file_o = 'C:/Users/DELL/Desktop/DSP/o.wav'
+file_a = '../ENG5027/a.wav'
+file_e = '../ENG5027/e.wav'
+file_i = '../ENG5027/i.wav'
+file_o = '../ENG5027/o.wav'
 
 
 # get the normalized signal
