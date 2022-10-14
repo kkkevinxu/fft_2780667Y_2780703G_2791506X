@@ -1,91 +1,134 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Oct  5 11:48:50 2022
+Created on Thu Oct 13 21:07:35 2022
 
-@author: DELL
+@author: 77127
 """
-import numpy as np
-import matplotlib.pyplot as plt
+
+#import
+import numpy as np #to use array
+import matplotlib.pyplot as plt #to use Matlab to plot
 from scipy.io import wavfile
 import scipy.signal
 
-sample_point = 472281;
-combined = np.zeros(sample_point)
-new = np.zeros(sample_point//2)
+'''
+plot the audio signal
+1.Plot1: normalised amplitudes vs time using a linear axis in the time domain
+2.Plot2: amplitude(dB) vs frequency using logarithmic axis in the frequency domain
+'''
 
-def cut_half(origin):
-    for m in range(0,sample_point//2):
-        new[m] = origin[m]
-    return new
-    
+sample_point = 472281;
+cut_point = int(214186.3945578231); #cut_point is (Sample_point/Sample_rate)*20000, 20kHz
+combined = np.zeros(sample_point)
+new = np.zeros(cut_point)
+
 def normalize(origin):
     new = origin - np.mean(origin) # Eliminate DC component 
     new = new / np.max(np.abs(new)) # Amplitude normalization 
     return new
 
+def cut_half(origin):
+    for m in range(0,cut_point):
+        new[m] = origin[m]
+    return new
+   
 def main():
-    Fs, samples = wavfile.read('../ENG5027/original.wav')
-    #Fs, samples = wavfile.read('/Users/96335/Desktop/original.wav')
-    for i in range(0,sample_point):
-        combined[i] = (samples[i, 0] + samples[i, 1])/2
-        
-    Ts = 1/Fs
-    T = sample_point/47100
-    time = np.linspace(0,T,sample_point)
-    plt.subplot(3,2,1)
+    #plot the audio signal
+    #1.Plot1: normalised amplitudes vs time using a linear axis in the time domain
+    Sample_rate, data = wavfile.read('/Users/77127/Desktop/fft/original.wav')
+    length = data.shape[0] / Sample_rate
+    Sample_point = int(Sample_rate*length)
+    combined = np.zeros(Sample_point)
+    #Combine the two channels into one and take the average
+    for i in range(0,Sample_point):
+        combined[i] = (data[i, 0] + data[i, 1])/2
+    print(f"number of channels = {data.shape[1]}")  
+    print(f"Sample_rate =  {Sample_rate}")
+    print(f"length = {length}s")
+    print(f'Sample_point = {Sample_point}')
     normalized = normalize(combined)
+    time = np.linspace(0., length, data.shape[0])
     plt.plot(time, normalized)
-    plt.xlabel('time(ms)');
-    plt.ylabel('Orignal Audio')
+    plt.xlabel("Time (s)")
+    plt.ylabel("Normalized Amplitude")
     plt.grid(1)
     plt.title('Original Audio')
-    
+    plt.show()
+
+    #2.Plot2: amplitude(dB) vs frequency using logarithmic axis in the frequency domain
+    Fs = Sample_rate
     Origin_fft = np.fft.fft(normalized)
-    Fre = np.linspace(0, 1/2*Fs,sample_point//2)
+    Fre = np.linspace(0, 20000,cut_point)
+    Fre_log = np.log10(Fre)
     Origin_fft_cut = cut_half(Origin_fft)
-    
-    plt.subplot(3,2,2)
-    plt.plot(Fre,20*np.log10(np.abs(Origin_fft_cut)))
+    plt.plot(Fre,20*np.log10(np.abs(Origin_fft_cut/Sample_point)))
     plt.xlabel('frequency(Hz)')
     plt.ylabel('Orignal Audio(dB)')
     plt.grid(1)
     plt.title('Original Audio')
+    plt.show()
     
+    plt.plot(Fre_log,20*np.log10(np.abs(Origin_fft_cut/Sample_point)))
+    plt.xlabel('frequency(Hz)[log scale]')
+    plt.ylabel('amplitude(dB)')
+    plt.grid(1)
+    plt.title('Original Audio')
+    plt.show()
+    
+    
+    #Audio Analysis
+    #1.Mark the peaks in the spectrum which correspond to the fundamental frequencies of any spoken vowels present in the sample.
+    #The energy of the vowels primarily lies in the range 250 – 2,000 Hz
+    
+    
+    #2.Mark the frequency range which mainly contains the consonants up to the highest frequencies containing them.
+    
+    #3.Mark the whole speech spectrum containing the vowels, consonants harmonics.
+
+
+    #Fourier Transform
+    
+    #highpass filter 150~
     sos_highpass = scipy.signal.butter(4, Wn=150, fs = Fs, btype="highpass",analog = False, output='sos')
     Highpass_result = scipy.signal.sosfilt(sos_highpass, normalized)
     Highpass_fft = np.fft.fft(Highpass_result)
     Highpass_fft_cut = cut_half(Highpass_fft)
-    plt.subplot(3,2,3)
+    
     plt.plot(Fre, 20*np.log10(np.abs(Highpass_fft_cut)))
     plt.xlabel('frequency(Hz)')
     plt.ylabel('Result Audio(dB)')
     plt.grid(1)
     plt.title('Result Audio')
-    
+    plt.show()
+
+    #bandpass filter 325,350
     sos_bandstop1 = scipy.signal.butter(4, Wn = [325, 350], fs = Fs, btype = "bandstop",analog = False, output='sos')
     Bandstop1_result = scipy.signal.sosfilt(sos_bandstop1, Highpass_result)
     Bandstop1_fft = np.fft.fft(Bandstop1_result)
     Bandstop1_fft_cut = cut_half(Bandstop1_fft)
-    plt.subplot(3,2,4)
+
     plt.plot(Fre, 20*np.log10(np.abs(Bandstop1_fft_cut)))
     plt.xlabel('frequency(Hz)')
     plt.ylabel('Result Audio(dB)')
     plt.grid(1)
     plt.title('Result Audio')
+    plt.show()
     
+    #bandpass filter 5000,7000
     sos_bandstop2 = scipy.signal.butter(4, Wn = [5000, 7000], fs = Fs,btype = "bandstop",analog = False, output='sos')
     Bandstop2_result = scipy.signal.sosfilt(sos_bandstop2, Bandstop1_result)
     Bandstop2_fft = np.fft.fft(Bandstop2_result)
     Bandstop2_fft_cut = cut_half(Bandstop2_fft)
-    plt.subplot(3,2,5)
+ 
     plt.plot(Fre, 20*np.log10(np.abs(Bandstop2_fft_cut)))
     plt.xlabel('frequency(Hz)')
     plt.ylabel('Result Audio(dB)')
     plt.grid(1)
     plt.title('Result Audio')
+    plt.show()
     wavfile.write('improved.wav',Fs,Bandstop2_result.astype(np.int16))
-    
-    
-    
+
+
+
 if __name__ == "__main__":
     main()
