@@ -106,7 +106,7 @@ def main():
     plt.title('Result Audio')
     plt.show()
 
-    #bandpass filter 325,350hz,to boost the signal from 325Hz to 350Hz
+    #bandstop filter 325,350hz,to cut the signal from 325Hz to 350Hz
     sos_bandstop1 = scipy.signal.butter(4, Wn = [325, 350], fs = Fs, btype = "bandstop",analog = False, output='sos')
     Bandstop1_result = scipy.signal.sosfilt(sos_bandstop1, Highpass_result)
     Bandstop1_fft = np.fft.fft(Bandstop1_result)
@@ -119,7 +119,7 @@ def main():
     plt.title('Result Audio')
     plt.show()
     
-    #bandpass filter 5000,7000hz, to boost the signal around 6kHz
+    #bandstop filter 5000,7000hz, to cut the signal around 6kHz
     sos_bandstop2 = scipy.signal.butter(4, Wn = [5000, 7000], fs = Fs,btype = "bandstop",analog = False, output='sos')
     Bandstop2_result = scipy.signal.sosfilt(sos_bandstop2, Bandstop1_result)
     Bandstop2_fft = np.fft.fft(Bandstop2_result)
@@ -133,7 +133,7 @@ def main():
     plt.show()
     wavfile.write('improved.wav',Fs,Bandstop2_result.astype(np.int16))
     
-    #Bandpass filter boosts in the 5500hz to 6500hz range
+    #Bandpass filter, boosts in the 5500hz to 6500hz range
     sos_bandpass1 = scipy.signal.butter(4, Wn = [5500,6500 ], fs = Fs,btype = "bandpass",analog = False, output='sos')
     Bandpass1_result = scipy.signal.sosfilt(sos_bandpass1, Bandstop2_result)
     Bandpass1_fft = np.fft.fft(Bandpass1_result)
@@ -146,7 +146,7 @@ def main():
     plt.title('Result Audio')
     plt.show()  
     
-    #Bandpass filter narrow boosts in the 200hz to 600hz range
+    #Bandpass filter, narrow boosts in the 200hz to 600hz range
     sos_bandpass2 = scipy.signal.butter(4, Wn = [200, 600], fs = Fs,btype = "bandpass",analog = False, output='sos')
     Bandpass2_result = scipy.signal.sosfilt(sos_bandpass2, Bandpass1_result)
     Bandpass2_fft = np.fft.fft(Bandpass2_result)
