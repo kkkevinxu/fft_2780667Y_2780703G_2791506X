@@ -46,6 +46,10 @@ def main():
     print(f"Sample_rate =  {Sample_rate}")
     print(f"length = {length}s")
     print(f'Sample_point = {Sample_point}')
+    print('--------')
+    print(combined)
+    print('--------')
+    
     normalized = normalize(combined)
     time = np.linspace(0., length, data.shape[0])
     
@@ -95,7 +99,7 @@ def main():
     
     #highpass filter 150~
     sos_highpass = scipy.signal.butter(4, Wn=150, fs = Fs, btype="highpass",analog = False, output='sos')
-    Highpass_result = scipy.signal.sosfilt(sos_highpass, normalized)
+    Highpass_result = scipy.signal.sosfilt(sos_highpass, combined)
     Highpass_fft = np.fft.fft(Highpass_result)
     Highpass_fft_cut = cut_half(Highpass_fft)
     
@@ -132,13 +136,13 @@ def main():
     plt.title('Result Audio')
     plt.show()
     wavfile.write('improved.wav',Fs,Bandstop2_result.astype(np.int16))
-    
+    '''  
     #Bandpass filter, boosts in the 5500hz to 6500hz range
     sos_bandpass1 = scipy.signal.butter(4, Wn = [5500,6500 ], fs = Fs,btype = "bandpass",analog = False, output='sos')
     Bandpass1_result = scipy.signal.sosfilt(sos_bandpass1, Bandstop2_result)
     Bandpass1_fft = np.fft.fft(Bandpass1_result)
     Bandpass1_fft_cut = cut_half(Bandpass1_fft)
- 
+
     plt.plot(Fre_log, 20*np.log10(np.abs(Bandpass1_fft_cut/Sample_point)))
     plt.xlabel('frequency(Hz)')
     plt.ylabel('Result Audio(dB)')
@@ -148,7 +152,7 @@ def main():
     
     #Bandpass filter, narrow boosts in the 200hz to 600hz range
     sos_bandpass2 = scipy.signal.butter(4, Wn = [200, 600], fs = Fs,btype = "bandpass",analog = False, output='sos')
-    Bandpass2_result = scipy.signal.sosfilt(sos_bandpass2, Bandpass1_result)
+    Bandpass2_result = scipy.signal.sosfilt(sos_bandpass2, Bandstop2_result)
     Bandpass2_fft = np.fft.fft(Bandpass2_result)
     Bandpass2_fft_cut = cut_half(Bandpass2_fft)
  
@@ -158,9 +162,35 @@ def main():
     plt.grid(1)
     plt.title('Result Audio')
     plt.show()
+    ''' 
+    
+    #if the the region of the highest harmonic voice frequencies in the spectrum is 8k-10kHz
+    
+    #bulid a empty array to store the increasing data
+    Result_fft = np.zeros(Sample_point)
+    #increase the amplitudes of the highest harmonic voice frequencies
+    for i in range(0,Sample_point):
+        if  i>=8000 and i<=10000:
+            Result_fft[i] = 20*Bandstop2_fft[i]
+    
+     
+    #rebulid voice    
+    Result_wav = np.fft.ifft(Result_fft)
+    
+    #plot the result diagram
+    Result_fft_cut = cut_half(Result_fft)   
+    plt.plot(Fre_log, 20*np.log10(np.abs(Result_fft_cut/Sample_point)))
+    plt.xlabel('frequency(Hz)')
+    plt.ylabel('Result Audio(dB)')
+    plt.grid(1)
+    plt.title('Result Audio')
+    plt.show()
+   
+    
+    
     
     #output wav
-    wavfile.write('improved.wav',Fs,Bandpass2_result.astype(np.int16))
+    wavfile.write('improved.wav',Fs,Result_wav.astype(np.int16))
 
 if __name__ == "__main__":
     main()
