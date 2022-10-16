@@ -129,14 +129,14 @@ def voweldetector(wavefile):
     # judge what vowel should it be
     if first > 700:
         if second > 1000:
-            return 'a'
+            return 'The vowel is a'
         else:
-            return 'e'
+            return 'The vowel is e'
     else:
         if second < 1000:
-            return 'i'
+            return 'The vowel is i'
         else:
-            return 'o'
+            return 'The vowel is o'
 
 
 
