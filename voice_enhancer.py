@@ -35,7 +35,7 @@ def cut_half(origin):
 def main():
     #plot the audio signal
     #1.Plot1: normalised amplitudes vs time using a linear axis in the time domain
-    Sample_rate, data = wavfile.read('/Users/77127/Desktop/fft/original.wav')
+    Sample_rate, data = wavfile.read('../ENG5027/original.wav')
     length = data.shape[0] / Sample_rate
     Sample_point = int(Sample_rate*length)
     combined = np.zeros(Sample_point)
@@ -171,7 +171,9 @@ def main():
     #increase the amplitudes of the highest harmonic voice frequencies
     for i in range(0,Sample_point):
         if  i>=8000 and i<=10000:
-            Result_fft[i] = 20*Bandstop2_fft[i]
+            Result_fft[i] = 1.1*Bandstop2_fft[i]
+        else:
+            Result_fft[i] = Bandstop2_fft[i]
     
      
     #rebulid voice    
@@ -194,6 +196,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-Fs, samples = wavfile.read('/Users/77127/Desktop/fft/improved.wav')
-print(Fs,'-----',samples)
