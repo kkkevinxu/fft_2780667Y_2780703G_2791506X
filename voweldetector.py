@@ -11,10 +11,10 @@ from scipy.io import wavfile
 import scipy.signal
 
 # Using the relative path of wavefiles as strings
-file_a = '../ENG5027/a.wav'
-file_e = '../ENG5027/e.wav'
-file_i = '../ENG5027/i.wav'
-file_o = '../ENG5027/o.wav'
+file_a = '../fft_2780667Y_2780703G_2791506X/a.wav'
+file_e = '../fft_2780667Y_2780703G_2791506X/e.wav'
+file_i = '../fft_2780667Y_2780703G_2791506X/i.wav'
+file_o = '../fft_2780667Y_2780703G_2791506X/o.wav'
 
 # Function to get the normalized signal
 def normalize(origin):
