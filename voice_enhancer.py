@@ -88,7 +88,7 @@ def main():
     Highpass_result = scipy.signal.sosfilt(sos_highpass, combined)
     Highpass_fft = np.fft.fft(Highpass_result)
     Highpass_fft_cut = cut_half(Highpass_fft)
-    
+    #Plot the filtered waveform   
     plt.plot(Fre_log, 20*np.log10(np.abs(Highpass_fft_cut/Sample_point)))
     plt.xlabel('frequency(Hz)')
     plt.ylabel('Process Audio(dB)')
@@ -101,7 +101,7 @@ def main():
     Bandstop1_result = scipy.signal.sosfilt(sos_bandstop1, Highpass_result)
     Bandstop1_fft = np.fft.fft(Bandstop1_result)
     Bandstop1_fft_cut = cut_half(Bandstop1_fft)
-
+    #Plot the filtered waveform
     plt.plot(Fre_log, 20*np.log10(np.abs(Bandstop1_fft_cut/Sample_point)))
     plt.xlabel('frequency(Hz)[log scale]')
     plt.ylabel('Process Audio(dB)')
@@ -114,7 +114,7 @@ def main():
     Bandstop2_result = scipy.signal.sosfilt(sos_bandstop2, Bandstop1_result)
     Bandstop2_fft = np.fft.fft(Bandstop2_result)
     Bandstop2_fft_cut = cut_half(Bandstop2_fft)
- 
+    #Plot the filtered waveform
     plt.plot(Fre_log, 20*np.log10(np.abs(Bandstop2_fft_cut/Sample_point)))
     plt.xlabel('frequency(Hz)[log scale]')
     plt.ylabel('Process Audio(dB)')
