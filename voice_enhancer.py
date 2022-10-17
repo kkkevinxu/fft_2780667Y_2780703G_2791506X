@@ -36,13 +36,6 @@ def main():
     #Combine the two channels into one and take the average
     for i in range(0,Sample_point):
         combined[i] = (data[i, 0] + data[i, 1])/2
-    print(f"number of channels = {data.shape[1]}")  
-    print(f"Sample_rate =  {Sample_rate}")
-    print(f"length = {length}s")
-    print(f'Sample_point = {Sample_point}')
-    print('--------')
-    print(combined)
-    print('--------')
     
     normalized = normalize(combined)
     time = np.linspace(0., length, data.shape[0])
