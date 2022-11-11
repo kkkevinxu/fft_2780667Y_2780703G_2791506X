@@ -9,24 +9,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal as signal
 
-def highpassDesign(Fs, Fc):
-    k = int(Fc)
-    x = np.ones(Fs)
-    x[0:k+1] = 0
-    x[Fs-k: Fs+1] = 0
-    result = np.fft.ifft(x)
-    result = np.real(result)
-    return result
+class filtercoefficients:
+    
+    def highpassDesign(Fs, Fc):
+        k = int(Fc)
+        x = np.ones(Fs)
+        x[0:k+1] = 0
+        x[Fs-k: Fs+1] = 0
+        result = np.fft.ifft(x)
+        result = np.real(result)
+        return result
 
-def bandstopDesign(Fs, Fc1, Fc2):
-    k1 = int(Fc1)
-    k2 = int(Fc2)
-    x = np.ones(Fs)
-    x[k1:k2+1] = 0
-    x[Fs-k2: Fs-k1+1] = 0
-    result = np.fft.ifft(x)
-    result = np.real(result)
-    return result
+    def bandstopDesign(Fs, Fc1, Fc2):
+        k1 = int(Fc1)
+        k2 = int(Fc2)
+        x = np.ones(Fs)
+        x[k1:k2+1] = 0
+        x[Fs-k2: Fs-k1+1] = 0
+        result = np.fft.ifft(x)
+        result = np.real(result)
+        return result
     
 def fftshift(fft,n):
     result = np.zeros(n)
@@ -69,7 +71,7 @@ def main():
     plt.ylabel('amplitude')
     plt.show()
     
-    h1 = fftshift(highpassDesign(fs,1),fs) * np.hamming(fs)
+    h1 = fftshift(filtercoefficients.highpassDesign(fs,1),fs) * np.hamming(fs)
     fir1 = FIRfilter(h1)
     y1 = np.zeros(len(data))
     for i in range(0,len(data)):
@@ -81,7 +83,7 @@ def main():
     plt.ylabel('amplitude')
     plt.show()
     
-    h2 = fftshift(bandstopDesign(fs,45,55),fs) * np.hamming(fs)
+    h2 = fftshift(filtercoefficients.bandstopDesign(fs,40,60),fs) * np.hamming(fs)
     plt.plot(np.linspace(0,fs,1000),h2)
     plt.xlabel('frequency(Hz)')
     plt.ylabel('amplitude')
@@ -102,7 +104,7 @@ def main():
     plt.ylabel('amplitude')
     plt.show()
     
-    plt.plot(time[0:2500],y2[0:2500])
+    plt.plot(time[1000:3000],y2[1000:3000])
     plt.xlabel('time(s)')
     plt.ylabel('amplitude')
     plt.show()
