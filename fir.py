@@ -59,7 +59,7 @@ def main():
     fs = 1000
     ts = 1/fs
     time = np.linspace(0,len(data)/fs,len(data))
-    plt.plot(time,data)
+    plt.plot(time[0:1500],data[0:1500])
     plt.xlabel('time(s)')
     plt.show()
     plt.ylabel('amplitude')
@@ -73,7 +73,6 @@ def main():
     plt.show()
     
     h1 = fftshift(highpassDesign(fs,1),fs) * np.hamming(fs)
-    #y1 = signal.lfilter(h1,1,data[0:1000])
     fir1 = FIRfilter(h1)
     y1 = np.zeros(len(data))
     for i in range(0,len(data)):
@@ -86,10 +85,13 @@ def main():
     plt.show()
     
     h2 = fftshift(bandstopDesign(fs,45,55),fs) * np.hamming(fs)
-    #y2 = signal.lfilter(h2,1,y1)
+    plt.plot(np.linspace(0,fs,1000),h2)
+    plt.xlabel('frequency(Hz)')
+    plt.ylabel('amplitude')
+    plt.show()
     fir2 = FIRfilter(h2)
-    y2 = np.zeros(len(data))
-    for i in range(0,len(data)):
+    y2 = np.zeros(len(y1))
+    for i in range(0,len(y1)):
         y2[i] = fir2.dofilter(y1[i])
     fft_y2 = np.fft.fft(y2)
     shifty2 = fftshift(20*np.log10(np.abs(fft_y2)),len(fft_y2))
@@ -97,6 +99,17 @@ def main():
     plt.xlabel('frequency(Hz)')
     plt.ylabel('amplitude')
     plt.show()
+    
+    plt.plot(time[0:1500],y1[0:1500])
+    plt.xlabel('time(s)')
+    plt.ylabel('amplitude')
+    plt.show()
+    
+    plt.plot(time[0:1500],y2[0:1500])
+    plt.xlabel('time(s)')
+    plt.ylabel('amplitude')
+    plt.show()
+        
     
     
     
