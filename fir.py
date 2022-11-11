@@ -47,11 +47,8 @@ class FIRfilter:
         self.save.append(v)
         index = len(self.save)
         if index > self.taps:
-            index = 1
-            self.save = []
-            self.save.append(v)
-        for m in range(0,index):
-            result = result + self.co[index-1-m]*self.save[m]
+            for m in range(0,self.taps):
+                result = result + self.co[self.taps-1-m]*self.save[m + index - self.taps]
         return result
     
 def main():
@@ -105,7 +102,7 @@ def main():
     plt.ylabel('amplitude')
     plt.show()
     
-    plt.plot(time[0:1500],y2[0:1500])
+    plt.plot(time[0:2500],y2[0:2500])
     plt.xlabel('time(s)')
     plt.ylabel('amplitude')
     plt.show()
