@@ -2,7 +2,7 @@
 """
 Created on Sat Nov 12 15:14:08 2022
 
-@author: DELL
+@author: Peifeng Xu
 """
 """
 Finite impulse response filter design. 

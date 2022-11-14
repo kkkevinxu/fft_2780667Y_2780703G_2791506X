@@ -2,7 +2,7 @@
 """
 Created on Mon Oct 31 16:11:40 2022
 
-@author: DELL
+@author: Peifeng Xu
 """
 
 import numpy as np
@@ -66,7 +66,7 @@ def fftshift(fft):
     
 def main():
     # Load data file
-    data = np.loadtxt('../fft_2780667Y_2780703G_2791506X/ECG_1000Hz_43.dat')
+    data = np.loadtxt('../fft_2780667Y_2780703G_2791506X/ecg.dat')
     fs = 1000
     ts = 1/fs
     
