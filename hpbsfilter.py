@@ -7,11 +7,10 @@ Created on Mon Oct 31 16:11:40 2022
 
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy.signal as signal
 from firfilter import FIRfilter
 
 """
-Finite impulse response filter coefficients calculation. 
+Finite impulse response filter coefficients calculation.
 Two functions are used to calculate the coefficients of high-pass filter
  and band-stop filter
 """
@@ -31,7 +30,7 @@ class filtercoefficients:
         result = np.fft.ifft(x)
         result = np.real(result)
         return result
-    
+
     """
     bandstopDesign used to calculate band-stop filter coefficients.
 
@@ -49,13 +48,13 @@ class filtercoefficients:
         result = np.fft.ifft(x)
         result = np.real(result)
         return result
-    
+
 """
 fftshift used to shift the positive time and negative time.
 
 :param fft: an array of the sample that need to shift, should be in frequency domain
 :return result: an array that is already shifted by the function
-"""    
+"""
 def fftshift(fft):
     n = len(fft)
     result = np.zeros(n)
@@ -63,20 +62,20 @@ def fftshift(fft):
     result[int(n/2):n] = fft[0:int(n/2)]
     return result
 
-    
+
 def main():
     # Load data file
-    data = np.loadtxt('../fft_2780667Y_2780703G_2791506X/ecg.dat')
+    data = np.loadtxt('ecg.dat')
     fs = 1000
     ts = 1/fs
-    
+
     # Plot a part of the original signal
     time = np.linspace(0,len(data)/fs,len(data))
     plt.plot(time[0:1500],data[0:1500])
     plt.xlabel('time(s)')
     plt.show()
     plt.ylabel('amplitude')
-    
+
     # Get the fft of the original signal and plot it
     data_fft = np.fft.fft(data)
     fre = np.linspace(0,fs,len(data_fft))
@@ -85,7 +84,7 @@ def main():
     plt.xlabel('frequency(Hz)')
     plt.ylabel('amplitude')
     plt.show()
-    
+
     # Get the filter coefficient of the baseline high-pass filter
     h1 = fftshift(filtercoefficients.highpassDesign(fs,1)) * np.hamming(fs)
     fir1 = FIRfilter(h1)
@@ -99,7 +98,7 @@ def main():
     plt.xlabel('frequency(Hz)')
     plt.ylabel('amplitude')
     plt.show()
-    
+
     # Get the filter coefficient of the 50Hz band-stop filter
     h2 = fftshift(filtercoefficients.bandstopDesign(fs,40,60)) * np.hamming(fs)
     plt.plot(np.linspace(0,fs,1000),h2)
@@ -117,22 +116,22 @@ def main():
     plt.xlabel('frequency(Hz)')
     plt.ylabel('amplitude')
     plt.show()
-    
+
     # Plot a part of the signal after high-pass filter
     plt.plot(time[0:1500],y1[0:1500])
     plt.xlabel('time(s)')
     plt.ylabel('amplitude')
     plt.show()
-    
+
     # Plot a part of the signal after band-stop filter
     plt.plot(time[1000:3000],y2[1000:3000])
     plt.xlabel('time(s)')
     plt.ylabel('amplitude')
     plt.show()
-        
-    
-    
-    
+
+
+
+
 
 if __name__ == "__main__":
     main()

@@ -11,7 +11,7 @@ from firfilter import FIRfilter
 
 
 """
-Finite impulse response filter coefficients calculation. 
+Finite impulse response filter coefficients calculation.
 Two functions are used to calculate the coefficients of high-pass filter
  and band-stop filter
 """
@@ -27,7 +27,7 @@ class filtercoefficients:
         result = np.fft.ifft(x)
         result = np.real(result)
         return result
-    
+
     """
     bandstopDesign used to calculate band-stop filter coefficients.
     """
@@ -40,10 +40,10 @@ class filtercoefficients:
         result = np.fft.ifft(x)
         result = np.real(result)
         return result
-    
+
 """
 fftshift used to shift the positive time and negative time.
-"""   
+"""
 def fftshift(fft):
     n = len(fft)
     result = np.zeros(n)
@@ -53,7 +53,7 @@ def fftshift(fft):
 
 """
 Filter the ECG with the time reversed template
-""" 
+"""
 def matched_filter(template,y):
 
     fir_coeffs = template[::-1]  #time reversing template
@@ -61,12 +61,12 @@ def matched_filter(template,y):
     det = np.zeros(len(y))
     for i in range(0,len(y)):
         det[i] = fir.dofilter(y[i])
-        
+
     return det
-        
+
 """
 Detect r peaks with the matched filter
-""" 
+"""
 def R_Detect(det,fs):
     distance_check = int(fs*0.3)  #set the minimum distance
     det_peaks = []
@@ -77,16 +77,16 @@ def R_Detect(det,fs):
                 peaks.append(i)
                 if i-peaks[-2]>distance_check:  #removing bogus detections
                     det_peaks.append(i)
-                      
-    return det_peaks 
+
+    return det_peaks
 
 
-  
+
 def main():
     # Load data file
-    data = np.loadtxt('../fft_2780667Y_2780703G_2791506X/ECG_1000Hz_43.dat')
+    data = np.loadtxt('ecg.dat')
     fs = 1000
-    
+
     # Get the filter coefficient of the baseline high-pass filter
     h1 = fftshift(filtercoefficients.highpassDesign(fs,1)) * np.hamming(fs)
     fir1 = FIRfilter(h1)
@@ -94,7 +94,7 @@ def main():
     # Input the original signal one by one
     for i in range(0,len(data)):
         y1[i] = fir1.dofilter(data[i])
-  
+
     # Get the filter coefficient of the 50Hz band-stop filter
     h2 = fftshift(filtercoefficients.bandstopDesign(fs,40,60)) * np.hamming(fs)
     fir2 = FIRfilter(h2)
@@ -105,9 +105,9 @@ def main():
         y2[i] = fir2.dofilter(y1[i])
         # Output the real-time heartbeat which shows the R peaks
         if(i==n*1000+2250):
-            template = y2[1250:2250]           
-            fir_coeff = template[::-1]           
-            det = matched_filter(fir_coeff,y2)          
+            template = y2[1250:2250]
+            fir_coeff = template[::-1]
+            det = matched_filter(fir_coeff,y2)
             det = det * det
             plt.plot(det)
             plt.xlabel('time(s)')
